@@ -3,6 +3,7 @@
 // License    : MIT (see the file LICENSE)
 // Maintainer : Andreas-C. Bernstein <andreas.bernstein@uni-weimar.de>
 // Stability  : experimental
+// edited by Alexander Pospischil (default_constructor)
 //
 // Color
 // -----------------------------------------------------------------------------
@@ -14,6 +15,9 @@
 
 struct Color
 {
+  Color()
+  :r(0),g(0),b(0){}
+
   Color(float red, float green, float blue) : r(red), g(green), b(blue) {}
   float r;
   float g;

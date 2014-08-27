@@ -13,7 +13,7 @@ struct Ray{
 	int depth;
 
 	glm::vec3 point_at(float t)const{
-
+		//TODO: implement!
 	}
 };
 

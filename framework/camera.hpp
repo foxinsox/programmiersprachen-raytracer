@@ -15,8 +15,8 @@ private:
 
 	
 	glm::vec4 camera_to_world(glm::vec4 const& camera_vec)const;
-	glm::mat4 camera_to_world;
-	glm::mat4 world_to_camera;
+	glm::mat4 camera_to_world_;
+	glm::mat4 world_to_camera_;
 	glm::vec3 eye;
 	glm::vec3 direction;
 	glm::vec3 up;

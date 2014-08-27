@@ -3,20 +3,16 @@
 
 #include "material.hpp"
 
-struct intersection{
 
-Intersection(glm::vec3 p, glm::vec3 n)
-: point(p),normal(n){}
+struct Intersection{
 
+	Intersection(std::shared_ptr<Material> const mat, glm::vec3 const& p, float t, bool hit_something)
+	: point(p),material(mat),ray_parameter(t),hit(hit_something){}
 
-glm::vec3 point;
-glm::vec3 normal;
-
-//TODO: pointer auf material einfügen
-
-
-float t;
-bool hit;
+	std::shared_ptr<Material> material;
+	glm::vec3 point;
+	float ray_parameter;
+	bool hit;
 
 
 };

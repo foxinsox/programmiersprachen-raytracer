@@ -7,7 +7,7 @@ class Light{
 
 public:
 	Light(glm::vec3 pos, Color d_term, Color a_term)
-	:position(pos),diff_term(d_term),amb_term(a_term){}
+	:position_(pos),diff_term_(d_term),amb_term_(a_term){}
 
 	void position(const glm::vec3 p);
 	glm::vec3 position()const;
@@ -20,9 +20,9 @@ public:
 
 private:
 
-	glm::vec4 position;
-	Color diff_term;
-	Color amb_term;
+	glm::vec3 position_;
+	Color diff_term_;
+	Color amb_term_;
 
 };
 

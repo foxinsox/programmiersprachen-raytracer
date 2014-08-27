@@ -1,8 +1,8 @@
 #ifndef BUW_CAMERA_HPP
 #define BUW_CAMERA_HPP
 
-#import <glm/glm.hpp>
-#import "ray.hpp"
+#include <glm/glm.hpp>
+#include "ray.hpp"
 
 class Camera{
 

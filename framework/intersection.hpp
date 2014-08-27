@@ -1,7 +1,7 @@
 #ifndef BUW_INTERSECTION_HPP
 #define BUW_INTERSECTION_HPP
 
-#import "material.hpp"
+#include "material.hpp"
 
 struct intersection{
 

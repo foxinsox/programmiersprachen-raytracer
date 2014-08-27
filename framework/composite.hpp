@@ -13,7 +13,6 @@ public:
 
 private:
 	std::vector<std::shared_ptr<Shape>> children;
-
 };
 
 #endif //BUW_COMPOSITE_HPP

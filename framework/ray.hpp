@@ -5,14 +5,14 @@
 
 struct Ray{
 
-	Ray(glm::vec4 dir, glm::vec4 orig, int d)
+	Ray(glm::vec3 dir, glm::vec3 orig, int d)
 	:direction(dir),origin(orig),depth(d){}
 
-	glm::vec4 direction;
-	glm::vec4 origin;
+	glm::vec3 direction;
+	glm::vec3 origin;
 	int depth;
 
-	glm::vec4 point_at(float t)const{
+	glm::vec3 point_at(float t)const{
 
 	}
 };

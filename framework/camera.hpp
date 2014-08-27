@@ -8,15 +8,21 @@ class Camera{
 
 public:
 	Camera();
-	Camera(glm::vec3 const& eye, glm::vec3 const& direction, glm::vec3 const& up, float fov_);
+	Camera(glm::vec3 const& eye_, glm::vec3 const& direction_, glm::vec3 const& up_, float fov_);
 	Ray generate_ray_at(glm::ivec2 const& screen_coord, int depth)const;
 
 private:
 
-	void calculate_transformation(glm::vec3 const& eye, glm::vec3 const& direction, glm::vec3 const& up);
+	
 	glm::vec4 camera_to_world(glm::vec4 const& camera_vec)const;
 	glm::mat4 camera_to_world;
+	glm::mat4 world_to_camera;
+	glm::vec3 eye;
+	glm::vec3 direction;
+	glm::vec3 up;
+	glm::vec2 fov;
 	float depth;
+	void calculate_transformation(glm::vec3 const& eye, glm::vec3 const& direction, glm::vec3 const& up);
 };
 
 #endif //BUW_CAMERA_HPP

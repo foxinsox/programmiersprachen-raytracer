@@ -20,5 +20,7 @@
 #include "composite.hpp"
 #include "shape.hpp"
 #include "material.hpp"
+#include "box.hpp"
+#include "sphere.hpp"
 
 #endif // BUW_FENSTERCHEN_HPP

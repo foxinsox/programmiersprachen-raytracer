@@ -2,18 +2,18 @@
 #define BUW_LIGHT_HPP
 
 #include "color.hpp"
+#include <glm/glm.hpp>
 
 class Light{
 
 public:
-	Light(glm::vec3 pos, Color d_term, Color a_term)
-	:position_(pos),diff_term_(d_term),amb_term_(a_term){}
+	Light(glm::vec3 pos, Color d_term, Color a_term);
 
-	void position(const glm::vec3 p);
+	void position(glm::vec3 const& p);
 	glm::vec3 position()const;
-	void diff_term(const Color c);
+	void diff_term(Color const& c);
 	Color diff_term()const;
-	void amb_term(const Color c);
+	void amb_term(Color const& c);
 	Color amb_term()const;
 
 

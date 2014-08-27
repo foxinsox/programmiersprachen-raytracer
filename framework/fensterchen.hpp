@@ -17,5 +17,8 @@
 #include "intersection.hpp"
 #include "camera.hpp"
 #include "scene.hpp"
+#include "composite.hpp"
+#include "shape.hpp"
+#include "material.hpp"
 
 #endif // BUW_FENSTERCHEN_HPP

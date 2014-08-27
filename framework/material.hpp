@@ -1,6 +1,8 @@
 #ifndef BUW_MATERIAL_HPP
 #define BUW_MATERIAL_HPP
 
+#include "color.hpp"
+
 struct Material{
 
 

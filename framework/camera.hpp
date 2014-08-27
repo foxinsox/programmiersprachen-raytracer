@@ -11,18 +11,18 @@ public:
 	Camera(glm::vec3 const& eye_, glm::vec3 const& direction_, glm::vec3 const& up_, float fov_);
 	Ray generate_ray_at(glm::ivec2 const& screen_coord, int depth)const;
 
-private:
+	void translate(glm::vec3 const& translationVector);
+	void rotate(float degrees, glm::vec3 const& axis);
 
-	
-	glm::vec4 camera_to_world(glm::vec4 const& camera_vec)const;
+
+private:
 	glm::mat4 camera_to_world_;
 	glm::mat4 world_to_camera_;
 	glm::vec3 eye;
 	glm::vec3 direction;
 	glm::vec3 up;
 	glm::vec2 fov;
-	float depth;
-	void calculate_transformation(glm::vec3 const& eye, glm::vec3 const& direction, glm::vec3 const& up);
+	float depth;  //focal length. muss berechnet werden (im konstruktor?)
 };
 
 #endif //BUW_CAMERA_HPP

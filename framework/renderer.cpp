@@ -3,18 +3,20 @@
 // License    : MIT (see the file LICENSE)
 // Maintainer : Andreas-C. Bernstein <andreas.bernstein@uni-weimar.de>
 // Stability  : experimental
-//
+// Edited by  : Alexander Pospischil
 // Renderer
 // -----------------------------------------------------------------------------
 
 #include "renderer.hpp"
 
-Renderer::Renderer(unsigned w, unsigned h, std::string const& file)
+
+Renderer::Renderer(unsigned w, unsigned h, std::string const& file, Scene const& scene)
   : width_(w)
   , height_(h)
   , colorbuffer_(w*h, Color(0.0, 0.0, 0.0))
   , filename_(file)
   , ppm_(width_, height_)
+  , scene_(scene)
 {}
 
 void Renderer::render()

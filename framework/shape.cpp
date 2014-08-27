@@ -14,16 +14,33 @@ glm::vec3 Shape::world_to_object (glm::vec3 const& world_vector) const
 }
 
 void Shape::translate(glm::vec3 const& translationVector){
-  // TODO: translation
+	auto m = glm::translate(glm::mat4(), translationVector);
+	auto m_inv = glm::translate(glm::mat4(), -translationVector);
+	object_to_world_ = m * object_to_world_;
+	world_to_object_ = world_to_object_ * m_inv;
+	object_to_world_T_ = glm::transpose(glm::mat3(object_to_world_));
+	world_to_object_T_ = glm::transpose(glm::mat3(world_to_object_));
 }
 
-void Shape::rotate(double const radians, glm::vec3 const& axisVector){
-  // TODO: rotation around axis
-}
+void Shape::rotate(float const radians, glm::vec3 const& axisVector){
+	auto m = glm::rotate(glm::mat4(), radians, axisVector);
+	auto m_inv = glm::rotate(glm::mat4(), -radians, axisVector);
+	object_to_world_ = m * object_to_world_;
+	world_to_object_ = world_to_object_ * m_inv;
+	object_to_world_T_ = glm::transpose(glm::mat3(object_to_world_));
+	world_to_object_T_ = glm::transpose(glm::mat3(world_to_object_));
+}	
+
 
 void Shape::scale(glm::vec3 const& scalingVector){
-  // TODO: scale
-}
+	auto m = glm::scale(glm::mat4(), scalingVector);
+	auto m_inv = glm::scale(glm::mat4(), glm::vec3(1.0f / scalingVector.x, 1.0f / scalingVector.y, 1.0f / scalingVector.z));
+	object_to_world_ = m * object_to_world_;
+	world_to_object_ = world_to_object_ * m_inv;
+	object_to_world_T_ = glm::transpose(glm::mat3(object_to_world_));
+	world_to_object_T_ = glm::transpose(glm::mat3(world_to_object_));
+}	
+
 
 bool Shape::is_branch() const{
 	return is_branch_;

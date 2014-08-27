@@ -6,8 +6,8 @@ class Composite : public Shape{
 public:
 	Composite();
 
-	void add_child(std::shared_ptr<Shape> cld);
-	void remove_child(std::shared_ptr<Shape> cld);
+	void add_child(std::shared_ptr<Shape> const& cld);
+	void remove_child(std::shared_ptr<Shape> const& cld);
 
 	void translate(glm::vec3 const& t) override;
 	void scale(glm::vec3 const& s) override;

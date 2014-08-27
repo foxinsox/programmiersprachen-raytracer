@@ -1,7 +1,10 @@
 #ifndef BUW_SHAPE_HPP
 #define BUW_SHAPE_HPP
 
+#define GLM_FORCE_RADIANS
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "intersection.hpp"
 #include "material.hpp"
 #include "ray.hpp"
@@ -17,7 +20,7 @@ public:
 	glm::vec3 world_to_object (glm::vec3 const& world_vector) const;
 
 	virtual void translate(glm::vec3 const& translationVector);
-	virtual void rotate(double const radians, glm::vec3 const& axisVector);
+	virtual void rotate(float const radians, glm::vec3 const& axisVector);
 	virtual void scale(glm::vec3 const& scalingVector);
 
 	bool is_branch() const;

@@ -11,7 +11,7 @@ public:
 
 	void translate(glm::vec3 const& t) override;
 	void scale(glm::vec3 const& s) override;
-	void rotate(double const radians, glm::vec3 const& axis) override;
+	void rotate(float const radians, glm::vec3 const& axis) override;
 
 	Intersection intersect_with(Ray const& r) const override;
 

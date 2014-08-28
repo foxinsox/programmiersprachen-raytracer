@@ -12,7 +12,7 @@ struct Intersection{
 
 
 	Intersection(std::shared_ptr<Material> const mat, glm::vec3 const& p, float t, bool hit_something)
-	: point(p),material(mat),ray_parameter(t),hit(hit_something){}
+	: material(mat),point(p),ray_parameter(t),hit(hit_something){}
 
 	std::shared_ptr<Material> material;
 	glm::vec3 point;

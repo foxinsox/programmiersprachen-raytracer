@@ -30,5 +30,3 @@ Intersection Composite::intersect_with(Ray const& r) const{
 	
 	return i;
 }
-
-//Consolas

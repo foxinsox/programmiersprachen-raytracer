@@ -15,6 +15,16 @@ struct Ray{
 	glm::vec3 point_at(float t)const{
 		return origin+direction*t;
 	}
+
+	//Operatorenüberladung, um glm::vec3 künftig einfacher mit mat4 verrechnen zu können.
+	friend Ray operator*(glm::mat4 const& t, Ray const& ray)
+	{
+		return Ray(
+			glm::vec3(t * glm::vec4(ray.origin, 1.0f)),
+			glm::vec3(t * glm::vec4(ray.direction, 0.0f)),
+			ray.depth
+			);
+	}
 };
 
 #endif //BUW_RAY_HPP

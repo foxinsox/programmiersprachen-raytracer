@@ -5,7 +5,8 @@ Box::Box(std::shared_ptr<Material> const& material)
 
 Intersection Box::intersect_with(Ray const& r) const{
 
+Intersection i;
 	//TODO: implementieren!!
-	return Intersection();
+	return i;
 }
 

@@ -23,7 +23,7 @@ private:
 	glm::mat4 camera_to_world_;
 	glm::mat4 world_to_camera_;
 	glm::vec2 fov;
-	float depth;  //focal length. muss berechnet werden (im konstruktor?)
+	float depth;  //focal length. muss berechnet werden
 };
 
 #endif //BUW_CAMERA_HPP

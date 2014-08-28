@@ -5,56 +5,100 @@ Box::Box(std::shared_ptr<Material> const& material)
 
 Intersection Box::intersect_with(Ray const& r) const{
 
-
+	//koordinaten in objektkoordinaten umrechnen
 	auto ray = world_to_object_ * r;
 
-	double tMin, tMax, tyMin, tyMax, tzMin, tzMax;
-	bool hit = 1;
-	float param;
+	float tmin, tmax, tymin , tymax, tzmin, tzmax;
 
-	//abchecken ob strahl trifft:
-	tMin = ((-1)-ray.origin[0])/ray.direction[0];
-	tMax = (1-ray.origin[0])/ray.direction[0];
-	if (tMin > tMax) std::swap(tMin, tMax);
-	tyMin = (-1-ray.origin[1])/ray.direction[1];
-	tyMax = (1-ray.origin[1])/ray.direction[1];
-	if (tyMin > tyMax) std::swap(tyMin, tyMax);
-	if ((tMin > tyMax) || (tyMin > tMax)){
-		hit = 0;
+
+	//checkt t for x-Direction
+	if (ray.direction.x >= 0.0f) {
+		tmin = (-1.0f - ray.origin.x) * ray.direction_reverse.x;
+		tmax = (1.0f - ray.origin.x) * ray.direction_reverse.x;
+	} else {
+		tmin = (1.0f - ray.origin.x) * ray.direction_reverse.x;
+		tmax = (-1.0f - ray.origin.x) * ray.direction_reverse.x;
 	}
-	if (tyMin > tMin) tMin = tyMin;
-	if (tyMax < tMax) tMax = tyMax;
-	tzMin = (-1-ray.origin[2])/ray.direction[2];
-	tzMax = (1-ray.origin[2])/ray.direction[2];
-	if (tzMin > tzMax) std::swap(tzMin, tzMax);
-	if ((tMin > tzMax) || (tzMin > tMax)){
-		hit = 0;
+
+	//check t for y-Direction
+	if (ray.direction.y >= 0.0f) {
+		tymin = (-1.0f - ray.origin.y) * ray.direction_reverse.y;
+		tymax = (1.0f - ray.origin.y) * ray.direction_reverse.y;
+	} else {
+		tymin = (1.0f - ray.origin.y) * ray.direction_reverse.y;
+		tymax = (-1.0f - ray.origin.y) * ray.direction_reverse.y;
 	}
-	if (tzMin > tMin) tMin = tzMin;
-	if (tzMax < tMax) tMax = tzMax;
-	// only if ray contains a tMin and tMax value
-	// if ((tMin > ray.tMax) || (tMax < ray.tMin)){
-	// 	hit = 0;	
-	// } 
-	// if (tMin > ray.tMin) ray.tMin = tMin;
-	// if (tMax < ray.tMax) ray.tMax = tMax;
 
-	//für robusteren und schnelleren code siehe:
-	// http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
+	//check for fail
+	if ( (tmin > tymax) || (tymin > tmax) ) {
+		return Intersection();
+	}
+	//compare t for smallest value
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
 
-	//negative schnittpunkte ignorieren
-	//TODO: So funktioniert das nicht!
-	if(tMin < 0) hit = 0;
+	//check t for z-Direction
+	if (ray.direction.z >= 0.0f) {
+		tzmin = (-1.0f - ray.origin.z) * ray.direction_reverse.z;
+		tzmax = (1.0f - ray.origin.z) * ray.direction_reverse.z;
+	} else {
+		tzmin = (1.0f - ray.origin.z) * ray.direction_reverse.z;
+		tzmax = (-1.0f - ray.origin.z) * ray.direction_reverse.z;
+	}
+	//check for fail
+	if ( (tmin > tzmax) || (tzmin > tmax) ) {
+		return Intersection();
+	}
 
-	glm::vec3 scale( tMin, tMin, tMin );
-    glm::mat4 m4( 1.0 ); // construct identity matrix
-    m4[0].x = scale.x;
-    m4[1].y = scale.y;
-    m4[2].z = scale.z;
+	//compare t for smallest value
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+	float t;
+	if (tmin < 0.0f) {
+		t = tmax;
+	} else {
+		t = tmin;
+	}
+
+	//ignore hits beyond camera view (fails)
+	if (t < 0.0f) {
+		return Intersection();
+	}
 
 
-    glm::vec4 point = ray.origin+ray.direction*m4;
-    Intersection i(point,mat,tMin,hit);
-    return i;
+	//calculate intersection_point
+	auto p = ray.point_at(t);
+	//p normalisieren
+	glm::vec3 n_squared = p * p;
+
+	//normale in schnittpunkt p berechnen;
+	glm::vec3 normal;
+	if (n_squared.x >= n_squared.y && n_squared.x >= n_squared.z) {
+		if (p.x >= 0)
+			normal = glm::vec3(1.0f, 0.0f, 0.0f);
+		else
+			normal = glm::vec3(-1.0f, 0.0f, 0.0f);
+	} else if (n_squared.y >= n_squared.x && n_squared.y >= n_squared.z) {
+		if (p.y >= 0)
+			normal = glm::vec3(0.0f, 1.0f, 0.0f);
+		else
+			normal = glm::vec3(0.0f, -1.0f, 0.0f);
+	} else if (n_squared.z >= n_squared.x && n_squared.z >= n_squared.y) {
+		if (p.z >= 0)
+			normal = glm::vec3(0.0f, 0.0f, 1.0f);
+		else
+			normal = glm::vec3(0.0f, 0.0f, -1.0f);
+	}
+
+	//Normale vor Rückgabe in weltkoordinaten zurückrechnen
+	glm::vec3 world_normal = glm::normalize(world_to_object_T_ * normal);
+	
+
+	return Intersection(material(),world_normal,t,true);
+
 }
 

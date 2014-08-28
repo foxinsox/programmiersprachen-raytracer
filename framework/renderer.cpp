@@ -46,6 +46,18 @@ void Renderer::render()
 
       //primary tracing:
       Intersection i = trace(ray);
+      
+      //first test:
+      if(i.hit == true){
+        Color black(0,0,0);
+        p.color = black;
+      }
+      else{
+        Color white(1,1,1);
+        p.color = white;
+      }
+
+      //shade!!
 
       write(p);
     }

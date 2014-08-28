@@ -2,6 +2,7 @@
 #define BUW_INTERSECTION_HPP
 
 #include "material.hpp"
+#include <glm/glm.hpp>
 
 
 struct Intersection{

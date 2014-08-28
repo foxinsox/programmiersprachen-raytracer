@@ -2,6 +2,7 @@
 #define BUW_SPHERE_HPP
 
 #include "intersection.hpp"
+#include "shape.hpp"
 
 class Sphere : public Shape{
 

@@ -3,6 +3,9 @@
 Shape::Shape()
 :world_to_object_(),object_to_world_(),material_(),is_branch_(false){}
 
+Shape::Shape(std::shared_ptr<Material> const& mat)
+:world_to_object_(),object_to_world_(),material_(mat),is_branch_(false){}
+
 glm::vec3 Shape::object_to_world (glm::vec3 const& object_vector) const
 {
 	return glm::normalize(object_to_world_T_ * object_vector);

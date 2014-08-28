@@ -13,6 +13,7 @@ class Shape{
 
 public:
 	Shape();
+	Shape(std::shared_ptr<Material> const& mat);
 
 	virtual Intersection intersect_with(Ray const& r) const = 0;
 

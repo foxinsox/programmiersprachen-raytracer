@@ -1,6 +1,9 @@
 #ifndef BUW_COMPOSITE_HPP
 #define BUW_COMPOSITE_HPP
 
+#include "shape.hpp"
+#include <vector>
+
 class Composite : public Shape{
 
 public:

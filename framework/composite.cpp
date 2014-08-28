@@ -1,7 +1,7 @@
 #include "composite.hpp"
 
 Composite::Composite()
-:children(){}
+:Shape(),children(){}
 
 void Composite::add_child(std::shared_ptr<Shape> const& cld){
 	children.push_back(cld);

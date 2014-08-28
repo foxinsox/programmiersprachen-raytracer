@@ -37,7 +37,7 @@ void Renderer::render()
       double pixelRemappedY = 1 - 2*pixelNormalizedY;
       double pixelCameraX = (2*pixelRemappedX - 1)*image_aspect_ratio*tan(alph/2);
       double pixelCameraY = (1 - 2*pixelRemappedY)*tan(alph/2);
-      glm::vec2 screen_coord(pixelCameraX,pixelCameraY);
+      glm::ivec2 screen_coord(pixelCameraX,pixelCameraY);
       Pixel p(pixelCameraX,pixelCameraY);
       int rayDepth = 1000; //TODO: automatisieren!
 
@@ -63,6 +63,33 @@ void Renderer::render()
     }
   }
   ppm_.save(filename_);
+}
+
+Intersection Renderer::trace(Ray const& ray)const{
+  //strahl wird nach intersections abgecheckt. kleinste intersection wird zurückgegeben.
+  const float RAY_EPSILON = 0.01f;
+
+  auto i = scene_.root().intersect_with(ray);
+  // avoid too short ray intersections
+  if (i.ray_parameter < RAY_EPSILON) {
+    auto direction = ray.direction;
+    auto origin = ray.origin + RAY_EPSILON * direction;
+    Ray new_ray(origin, direction, ray.depth);
+    i = scene_.root().intersect_with(new_ray);
+  }
+  return i;
+}
+
+Color Renderer::shade(Ray const& r, Intersection const& isec)const{
+  //TODO: implement!
+  Color c(0,0,0);
+  return c;
+}
+
+Color Renderer::shadow(Ray const& r) const{
+  //TODO: implement!
+  Color c(0,0,0);
+  return c;
 }
 
 void Renderer::write(Pixel const& p)

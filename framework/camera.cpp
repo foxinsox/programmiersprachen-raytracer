@@ -24,7 +24,7 @@ void Camera::calculate_transformationMatrix(glm::vec3 const& eye_, glm::vec3 con
 Ray Camera::generate_ray_at(glm::vec2 const& screen_coord, int rayDepth) const{
 	glm::vec3 origin(0.0f, 0.0f, 0.0f);
 	glm::vec3 direction(glm::vec3(screen_coord.x - 0.5, screen_coord.y - 0.5, -depth) - origin);
-	Ray r = camera_to_world_ * Ray(origin, direction, rayDepth);
+	Ray r = camera_to_world_ * Ray(direction, origin, rayDepth);
 	r.direction = glm::normalize(r.direction);
 	return r;
 }

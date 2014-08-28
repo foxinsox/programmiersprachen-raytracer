@@ -23,7 +23,10 @@ Intersection Composite::intersect_with(Ray const& r) const{
 	
 //alle childs durchgehen und das niedrigste T verwenden...
 //koordinaten umrechnen
+
 	auto ray = world_to_object_ * r;
+
+
 
 	float min_t = 9999.0f;  //TODO: automatisieren bzw. globalisieren
 	Intersection i;

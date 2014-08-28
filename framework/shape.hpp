@@ -8,6 +8,7 @@
 #include "intersection.hpp"
 #include "material.hpp"
 #include "ray.hpp"
+#include <iostream>
 
 class Shape{
 

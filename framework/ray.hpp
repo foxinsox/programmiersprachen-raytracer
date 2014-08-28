@@ -2,6 +2,7 @@
 #define BUW_RAY_HPP
 
 #include <glm/glm.hpp>
+#include <iostream>
 
 struct Ray{
 
@@ -21,11 +22,19 @@ struct Ray{
 	friend Ray operator*(glm::mat4 const& t, Ray const& ray)
 	{
 		return Ray(
-			glm::vec3(t * glm::vec4(ray.origin, 1.0f)),
 			glm::vec3(t * glm::vec4(ray.direction, 0.0f)),
+			glm::vec3(t * glm::vec4(ray.origin, 1.0f)),
 			ray.depth
 			);
 	}
+
+	friend std::ostream& operator<<(std::ostream& os, Ray const& r)
+	{
+		os << "(" << r.origin.x << "," << r.origin.y << "," << r.origin.z << ")";
+		os << "(" << r.direction.x << "," << r.direction.y << "," << r.direction.z << ")\n";
+		return os;
+	}
+
 };
 
 #endif //BUW_RAY_HPP

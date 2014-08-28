@@ -18,6 +18,7 @@
 #include "ppmwriter.hpp"
 #include <string>
 #include <glm/glm.hpp>
+#include <iostream>
 
 class Renderer
 {

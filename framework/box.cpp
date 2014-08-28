@@ -8,6 +8,7 @@ Intersection Box::intersect_with(Ray const& r) const{
 	//koordinaten in objektkoordinaten umrechnen
 	auto ray = world_to_object_ * r;
 
+
 	float tmin, tmax, tymin , tymax, tzmin, tzmax;
 
 

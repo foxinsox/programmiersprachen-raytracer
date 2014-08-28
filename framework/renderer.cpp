@@ -71,41 +71,49 @@ Intersection Renderer::trace(Ray const& ray)const{
   if (i.ray_parameter < RAY_EPSILON) {
     auto direction = ray.direction;
     auto origin = ray.origin + RAY_EPSILON * direction;
-    Ray new_ray(origin, direction, ray.depth);
+    Ray new_ray(direction, origin, ray.depth);
     i = scene_.root().intersect_with(new_ray);
   }
-  return i;
-}
+    return i;
+  }
 
-Color Renderer::shade(Ray const& ray, Intersection const& i)const{
+  Color Renderer::shade(Ray const& ray, Intersection const& i)const{
 
-  Color result(0.0f, 0.0f, 0.0f);
-  auto p = ray.point_at(i.ray_parameter);
-  auto lights = scene_.lights();
-  auto material = i.material;
-  auto eye_dir = -ray.direction;
+    Color result(0.0f, 0.0f, 0.0f);
+    auto p = ray.point_at(i.ray_parameter);
+    auto lights = scene_.lights();
+    auto material = i.material;
+    auto eye_dir = -ray.direction;
 auto normal = i.point; //glm::faceforward(i.n, ray.d, i.n);
+
 
 //gehe alle Lichtquellen durch
 for (auto const& light: lights) {
   auto light_dir = glm::normalize (light.position() - p);
-  Ray shadow_ray(p + RAY_EPSILON * light_dir, light_dir, ray.depth);
+
+  Ray shadow_ray(light_dir, p + RAY_EPSILON * light_dir, ray.depth);
   auto shadow_color = shadow(shadow_ray);
+
   if(!shadow_color.is_black()){
+    //std::cout<<"TEST"<<std::endl;
+
 // diffuse light
     auto cos_phi = glm::dot (light_dir, normal);
     cos_phi = cos_phi > 0.0f ? cos_phi : 0.0f;
+    //if (cos_phi <= 0) std::cout << cos_phi << std::endl;
     result += cos_phi * (light.diff_term() * material->diffuse_color_);
 // specular highlights
     auto reflect_light_dir = glm::normalize (glm::reflect (light_dir, normal));
     auto cos_beta = glm::dot (reflect_light_dir, eye_dir);
     cos_beta = cos_beta > 0.0f ? cos_beta : 0.0f;
     auto cos_beta_m = glm::pow (cos_beta, material->specular_exp_);
-    result += cos_beta_m * (light.diff_term() * material->specular_color_);
+    //result += cos_beta_m * (light.diff_term() * material->specular_color_);
+  } else {
+    //std::cout <<"shadow_color"<< shadow_color << std::endl;
   }
-  result = shadow_color * result;
+  //result = shadow_color * result;
 // ambient light
-  result += light.amb_term() * material->ambient_color_;
+  //result += light.amb_term() * material->ambient_color_;
 }
 
 /*  //TODO: Material anpassen
@@ -115,7 +123,7 @@ if (ray.depth > 0) {
   if (material->is_reflective()) {
     auto d = glm::reflect (ray.d, normal);
     auto o = p + d * RAY_EPSILON;
-    Ray reflected_ray(o, d, ray.depth-1);
+    Ray reflected_ray(d, o, ray.depth-1);
     reflected_color = material->specular_color_ * shade(reflected_ray, trace(reflected_ray));
     result += reflected_color;
   }
@@ -134,7 +142,7 @@ if (ray.depth > 0) {
     if (d == glm::vec3(0.0f)) {
       return reflected_color;
     }
-    Ray refracted_ray(o, d, ray.depth-1);
+    Ray refracted_ray(d, o, ray.depth-1);
     result = (1.0f - material->transparency) * result;
     result += material->transparency * shade(refracted_ray, trace(refracted_ray));
   }

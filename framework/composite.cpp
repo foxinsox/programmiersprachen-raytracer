@@ -29,8 +29,12 @@ void Composite::rotate(float const radians, glm::vec3 const& axis){
 }
 
 Intersection Composite::intersect_with(Ray const& r) const{
-	Intersection i;
+	
+//TODO: implementieren
 
-	//TODO: implementieren!!
+//koordinaten umrechnen
+	auto ray = world_to_object_ * r;
+	Intersection i;
+	
 	return i;
 }

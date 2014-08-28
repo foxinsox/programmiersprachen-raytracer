@@ -32,7 +32,6 @@ public:
 protected:
 	glm::mat4 world_to_object_;
 	glm::mat4 object_to_world_;
-	//TODO: klären!!
 	// transposed transformations
 	glm::mat3 world_to_object_T_;
 	glm::mat3 object_to_world_T_;

@@ -24,7 +24,7 @@ class Renderer
 public:
   Renderer(unsigned w, unsigned h, std::string const& file, Scene const& scene);
 
-  
+  const float RAY_EPSILON = 0.01f;
   void render();
   void write(Pixel const& p);
 

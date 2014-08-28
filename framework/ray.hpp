@@ -6,9 +6,10 @@
 struct Ray{
 
 	Ray(glm::vec3 dir, glm::vec3 orig, int d)
-	:direction(dir),origin(orig),depth(d){}
+	:direction(dir),direction_reverse(1.0f / dir.x, 1.0f / dir.y, 1.0f / dir.z),origin(orig),depth(d){}
 
 	glm::vec3 direction;
+	glm::vec3 direction_reverse;
 	glm::vec3 origin;
 	int depth;
 

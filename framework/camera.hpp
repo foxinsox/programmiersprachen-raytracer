@@ -1,7 +1,10 @@
 #ifndef BUW_CAMERA_HPP
 #define BUW_CAMERA_HPP
 
+#define GLM_FORCE_RADIANS
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "ray.hpp"
 
 class Camera{

@@ -4,16 +4,27 @@
 
 int main(int argc, char* argv[])
 {
-  /*
+  
   unsigned const width = 600;
   unsigned const height = 600;
-  std::string const filename = "./checkerboard.ppm";
+  std::string const filename = "./raytracing.ppm";
 
+
+  //manuelle scene:
   Scene scene;
+  Camera cam;
+  auto mat = std::make_shared<Material>();
+  auto sphere = std::make_shared<Sphere>(mat);
+  scene.camera(cam);
+  scene.add_shape(sphere);  
+
+
 
   Renderer app(width, height, filename, scene);
 
-  std::thread thr([&app]() { app.render(); });
+  std::thread thr([&app]() {
+    app.render(); 
+  });
 
   Window win(glm::ivec2(width,height));
 
@@ -29,6 +40,5 @@ int main(int argc, char* argv[])
   }
 
   thr.join();
-*/
   return 0;
 }

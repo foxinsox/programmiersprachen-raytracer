@@ -168,23 +168,23 @@ Color Renderer::shadow(Ray const& ray) const{
       */
       return Color(0);
     //}
-  } else {
-    return Color(1);
+    } else {
+      return Color(1);
+    }
   }
-}
 
-void Renderer::write(Pixel const& p)
-{
+  void Renderer::write(Pixel const& p)
+  {
   // flip pixels, because of opengl glDrawPixels
-  size_t buf_pos = (width_*p.y + p.x);
-  if (buf_pos >= colorbuffer_.size() || (int)buf_pos < 0) {
-    std::cerr << "Fatal Error Renderer::write(Pixel p) : "
-    << "pixel out of ppm_ : "
-    << (int)p.x << "," << (int)p.y
-    << std::endl;
-  } else {
-    colorbuffer_[buf_pos] = p.color;
-  }
+    size_t buf_pos = (width_*p.y + p.x);
+    if (buf_pos >= colorbuffer_.size() || (int)buf_pos < 0) {
+      std::cerr << "Fatal Error Renderer::write(Pixel p) : "
+      << "pixel out of ppm_ : "
+      << (int)p.x << "," << (int)p.y
+      << std::endl;
+    } else {
+      colorbuffer_[buf_pos] = p.color;
+    }
 
-  ppm_.write(p);
-}
+    ppm_.write(p);
+  }

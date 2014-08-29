@@ -2,7 +2,7 @@
 
 
 SDFReader::SDFReader(std::string const& path)
-:filepath(path),error(false),scene_(),materials(),error_message("Error: could not read SDF"){}
+:filepath(path),error(false),scene_(),materials(),shapes(),error_message("Error: could not read SDF"){}
 
 
 
@@ -171,6 +171,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		shape->scale(glm::vec3(scalingX,scalingY,scalingZ));
 
 		scene_.add_shape(shape); 
+		shapes.insert ({name,shape});
 	}
 	if(shapeType == "sphere"){
 
@@ -178,7 +179,6 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		requestString(line_stream, name);
 
 		// std::cout<<shapeType<<" "<<name<<std::endl;
-
 
 		glm::vec3 center;
 		requestVec3(line_stream, center);
@@ -194,14 +194,36 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 				pos = line_stream.tellg();
 				printError(line_stream, pos, std::string("material not found"));
 			}
-			error = true;
+			return error = true;
 		}
 
 		auto shape = std::make_shared<Sphere>(mat);
 		shape->translate(center);
 		shape->scale(glm::vec3(glm::abs(radius)));
 		scene_.add_shape(shape);
+		shapes.insert ({name,shape});
+
 	}
+	if(shapeType == "composite"){
+		std::string comp_name;
+		requestString(line_stream, comp_name);
+		auto comp = std::make_shared<Composite>();
+
+		while(!line_stream.eof()){
+			std::string child_name;
+			requestString(line_stream, child_name);
+			std::shared_ptr<Shape> child = shapes.find(child_name)->second;
+			if(!child){
+				if(!error) {
+					pos = line_stream.tellg();
+					printError(line_stream, pos, std::string("child shape not found"));
+				}
+				return error = true;
+			}
+			comp->add_child(child);
+		}
+	}
+
 	else{
 		if(!error) {
 			pos = line_stream.tellg();

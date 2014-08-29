@@ -32,6 +32,7 @@ private:
 	std::string error_message;
 	Scene scene_;
 	std::map<std::string,std::shared_ptr<Material>> materials;
+	std::map<std::string,std::shared_ptr<Shape>> shapes;
 
 	bool requestCommand(std::stringstream& token_stream);
 	bool requestDefinition(std::stringstream& token_stream);

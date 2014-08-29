@@ -1,6 +1,7 @@
 #include <thread>
 #include <renderer.hpp>
 #include <fensterchen.hpp>
+#include "sdf_reader.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -8,7 +9,10 @@ int main(int argc, char* argv[])
   unsigned const width = 600;
   unsigned const height = 600;
   std::string const filename = "./raytracing.ppm";
+  std::string const SDF_filepath = "../SDFFiles/testfile.txt";
 
+  SDFReader reader(SDF_filepath);
+  bool read = reader.load();
 
   //manuelle scene:
   Scene scene;

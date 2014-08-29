@@ -1,8 +1,12 @@
 #ifndef BUW_SDF_READER
 #define BUW_SDF_READER
 
-#include <string>
 #include "scene.hpp"
+
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 
 class SDFReader{

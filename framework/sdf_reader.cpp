@@ -141,12 +141,6 @@ bool SDFReader::requestLight(std::stringstream& line_stream){
 	scene_.add_light(l);
 	lights.insert({light_name,l});
 
-// 	int pos = line_stream.tellg();
-// 	if(!error) {
-// 		printError(line_stream, pos - entity_name.size()-1, std::string("unknown entity ") + entity_name);
-// 	}
-// 	error = true;
-// }
 return !error;
 };
 

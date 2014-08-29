@@ -19,10 +19,10 @@ struct Material{
 
 	friend std::ostream& operator<<(std::ostream& os, Material const& m)
 	{
-		os << "  ambient color: (" << m.ambient_color_.r << "," << m.ambient_color_.g << "," << m.ambient_color_.b<<")";
-		os << "  diffuse color: (" << m.diffuse_color_.r << "," << m.diffuse_color_.g << "," << m.diffuse_color_.b<<")";
-		os << "  specular color: (" << m.specular_color_.r << "," << m.specular_color_.g << "," << m.specular_color_.b<<")";
-		os << "  specular exponent: "<< m.specular_exp_;
+		os << "ambient color(" << m.ambient_color_.r << "," << m.ambient_color_.g << "," << m.ambient_color_.b<<")";
+		os << " diffuse color(" << m.diffuse_color_.r << "," << m.diffuse_color_.g << "," << m.diffuse_color_.b<<")";
+		os << " specular color(" << m.specular_color_.r << "," << m.specular_color_.g << "," << m.specular_color_.b<<")";
+		os << " specular exponent: "<< m.specular_exp_;
 		return os;
 	}
 

@@ -9,15 +9,15 @@ int main(int argc, char* argv[])
   unsigned const width = 600;
   unsigned const height = 600;
   std::string const filename = "./raytracing.ppm";
-  std::string const SDF_filepath = "../SDFFiles/testfile.txt";
+  std::string const SDF_filepath = "../SDFFiles/testfile.sdf";
 
   SDFReader reader(SDF_filepath);
   bool read = reader.load();
 
-  //manuelle scene:
-  Scene scene;
+  //halbautomatische scene:
+  Scene scene = reader.scene();
 
-
+  //Scene scene;
   //manuelle camera:
   Camera cam;
   scene.camera(cam);
@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
   Light l(lightPos,lightDiff,lightAmb);
   scene.add_light(l);
 
+
+/*
   //manuelles material:
   Color ambCol0(1,0,1);
   Color diffCol0(0.8f,1,1);
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
   scene.add_shape(sphere);  
   scene.add_shape(sphere2);  
   scene.add_shape(box);
-
+*/
 
 
   Renderer app(width, height, filename, scene);

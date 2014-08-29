@@ -4,7 +4,10 @@
 Camera::Camera()
 : depth(1),camera_to_world_(),world_to_camera_(){}
 
-Camera::Camera(glm::vec3 const& eye_, glm::vec3 const& direction_, glm::vec3 const& up_, float fov_degrees)
+Camera::Camera(float const fov_degrees)
+: depth(1.0f / (2.0f * std::tan(fov_degrees / 360.0f * M_PI))),camera_to_world_(),world_to_camera_(){}
+
+Camera::Camera(float const fov_degrees, glm::vec3 const& eye_, glm::vec3 const& direction_, glm::vec3 const& up_)
 : depth(1.0f / (2.0f * std::tan(fov_degrees / 360.0f * M_PI))),camera_to_world_(),world_to_camera_()
 {
 	calculate_transformationMatrix(eye_,direction_,up_);
@@ -21,7 +24,7 @@ void Camera::calculate_transformationMatrix(glm::vec3 const& eye_, glm::vec3 con
 	world_to_camera_ = glm::inverse(camera_to_world_);
 };
 
-Ray Camera::generate_ray_at(glm::vec2 const& screen_coord, int rayDepth) const{
+Ray Camera::generate_ray_at(glm::vec2 const& screen_coord, int const rayDepth) const{
 	glm::vec3 origin(0.0f, 0.0f, 0.0f);
 	glm::vec3 direction(glm::vec3(screen_coord.x - 0.5, screen_coord.y - 0.5, -depth) - origin);
 	Ray r = camera_to_world_ * Ray(direction, origin, rayDepth);

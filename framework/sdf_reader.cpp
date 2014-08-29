@@ -132,15 +132,15 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		std::string name;
 		requestString(line_stream, name);
 
-		std::cout<<shapeType<<" "<<name<<std::endl;
+		// std::cout<<shapeType<<" "<<name<<std::endl;
 
 		glm::vec3 p1;
 		requestVec3(line_stream, p1);
-		// std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
+		 // std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
 
 		glm::vec3 p2;
 		requestVec3(line_stream, p2);
-		// std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
+		 // std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
 
 
 		std::string material;
@@ -157,14 +157,17 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		}
 
 		auto shape = std::make_shared<Box>(mat);
-		float xCenter = p2.x-(p2.x-p1.x)/2;
-		float yCenter = p2.y-(p2.y-p1.y)/2;
-		float zCenter = p2.z-(p2.z-p1.z)/2;
+		float xCenter = p2.x-(p2.x-p1.x)/2.0f;
+		float yCenter = p2.y-(p2.y-p1.y)/2.0f;
+		float zCenter = p2.z-(p2.z-p1.z)/2.0f;
+		// std::cout<<"Center translation: "<<xCenter<<","<<yCenter<<","<<zCenter<<std::endl;
 		shape->translate(glm::vec3(xCenter,yCenter,zCenter));
 
-		float scalingX = (p2.x-p1.x)/2;
-		float scalingY = (p2.y-p1.y)/2;
-		float scalingZ = (p2.z-p1.z)/2;
+		float scalingX = glm::abs(p2.x-p1.x)/2.0f;
+		float scalingY = glm::abs(p2.y-p1.y)/2.0f;
+		float scalingZ = glm::abs(p2.z-p1.z)/2.0f;
+		// std::cout<<"scaling: "<<scalingX<<","<<scalingY<<","<<scalingZ<<std::endl;
+
 		shape->scale(glm::vec3(scalingX,scalingY,scalingZ));
 
 		scene_.add_shape(shape); 
@@ -174,7 +177,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		std::string name;
 		requestString(line_stream, name);
 
-		std::cout<<shapeType<<" "<<name<<std::endl;
+		// std::cout<<shapeType<<" "<<name<<std::endl;
 
 
 		glm::vec3 center;
@@ -196,7 +199,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 
 		auto shape = std::make_shared<Sphere>(mat);
 		shape->translate(center);
-		shape->scale(glm::vec3(radius));
+		shape->scale(glm::vec3(glm::abs(radius)));
 		scene_.add_shape(shape);
 	}
 	else{

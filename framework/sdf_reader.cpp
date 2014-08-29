@@ -2,7 +2,7 @@
 
 
 SDFReader::SDFReader(std::string const& path)
-:filepath(path),error(false),scene_(),materials(),shapes(),lights(),error_message("Error: could not read SDF"){}
+:filepath(path),error(false),scene_(),materials(),shapes(),lights(),cameras(),error_message("Error: could not read SDF"){}
 
 
 
@@ -110,6 +110,9 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 	if(entity_name == "light"){
 		requestLight(line_stream);
 	}
+	if(entity_name == "camera"){
+		requestCamera(line_stream);
+	}
 	//weitere ifs
 
 
@@ -120,6 +123,37 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 		}
 		error = true;
 	}
+	return !error;
+};
+
+bool SDFReader::requestCamera(std::stringstream& line_stream){
+
+//camera <name> <fov-x> <eye> <dir> <up>
+	std::string camera_name;
+	requestString(line_stream, camera_name);
+
+	float fov_x;
+	requestFloat(line_stream, fov_x);
+
+	if(line_stream.eof()){
+		Camera cam(fov_x);
+		scene_.camera(cam);
+		return !error;
+	}
+
+	glm::vec3 eye;
+	requestVec3(line_stream, eye);
+
+	glm::vec3 dir;
+	requestVec3(line_stream, dir);
+
+	glm::vec3 up;
+	requestVec3(line_stream, up);
+
+	Camera cam(fov_x,eye,dir,up);
+
+
+
 	return !error;
 };
 
@@ -141,7 +175,7 @@ bool SDFReader::requestLight(std::stringstream& line_stream){
 	scene_.add_light(l);
 	lights.insert({light_name,l});
 
-return !error;
+	return !error;
 };
 
 bool SDFReader::requestShape(std::stringstream& line_stream){

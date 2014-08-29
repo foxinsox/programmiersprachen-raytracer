@@ -2,7 +2,10 @@
 
 
 SDFReader::SDFReader(std::string const& path)
-:filepath(path),error(false),scene_(),error_message("Error: could not read SDF"){}
+:filepath(path),error(false),scene_(),materials(),error_message("Error: could not read SDF"){}
+
+
+
 
 bool SDFReader::load(){
 	/*angegebenes file durchgehen, wert für wert zwischen den kommas auslesen, entsprechend verwerten.
@@ -11,71 +14,24 @@ bool SDFReader::load(){
 	// stringstream ss;
 	// string s = ss.str();
 
+	error = false;
+	std::ifstream ifs;
+	ifs.open(filepath);
 
-
-	const int ROWS = 100;
-	const int COLS = 80;
-	const int BUFFSIZE = 80;
-
-  // The array must be big enough to fit the input data.
-	int array[ROWS][COLS] = {0};
-	int row, col;
-  char buff[BUFFSIZE]; // a buffer to temporarily park the data
-  std::ifstream infile(filepath);
-  std::stringstream ss;
-  // Read input into the buffer a line at a time, until
-  //  end of file is reached (newlines are automatically
-  //  discarded).  The buffer must be big enough to fit
-  //  an entire line from the file.
-  // Notice that while reading from the file we check how
-  //  many rows have been read, to avoid writing beyond
-  //  the end of the array.
-  row = 0;
-  while( infile.getline( buff,  BUFFSIZE ) && row < ROWS ) {
-	// copy the entire buffered line into the stringstream
-  	ss << buff;
-	// Read from ss back into the buffer.  Now, ',' is
-	//  specified as the delimiter so it reads only until
-	//  it reaches a comma (which is automatically
-	//  discarded) or reaches the 'eof', but of course
-	//  this 'eof' is really just the end of a line of the
-	//  original input.  The "10" means this will handle
-	//  input numbers of 9 digits or less.
-	//  While reading from the stringstream, we check
-	//  how many columns have been read to avoid
-	//  writing past the end of the array.
-  	col = 0;
-  	while( ss.getline( buff, 10, ',' ) && col < COLS ) {
-	  // Next, use the stdlib atoi function to convert the
-	  //  input value that was just read from ss to an int,
-	  //  and copy it into the array.
-  		array[row][col] = atoi( buff );
-  		++col;
-  	}
-	// This copies an empty string into ss, erasing the
-	//  previous contents.
-  	ss << ""; 
-	// This clears the 'eof' flag.  Otherwise, even after 
-	//  writing new data to ss we wouldn't be able to
-	//  read from it.
-  	ss.clear();
-  	++row;
-  }
-  // Now print the array to see the result
-  for( int _row = 0; _row < 10; ++_row ) {
-  	for( int _col = 0; _col < 10; ++_col ) {
-  		std::cout << array[_row][_col] << " ";
-  	}
-  	std::cout << std::endl;
-  }
-  infile.close();
-
-
-
-
-
-
-  return true;
+	if(ifs.is_open()){
+		while(ifs.good()){
+			std::string line;
+			std::getline(ifs,line);
+			std::stringstream line_stream(line);
+			requestCommand(line_stream);  //einstieg
+		}
+	}
+	else{
+		std::cout<<"file could not be opened"<<std::endl;
+		error = true;
+	}
+	ifs.close();
+	return !error;
 };
 
 bool SDFReader::load(std::string const& path){
@@ -86,3 +42,237 @@ bool SDFReader::load(std::string const& path){
 Scene SDFReader::scene()const{
 	return scene_;
 };
+
+
+void 
+SDFReader::printError(std::stringstream& line_stream, int pos, std::string const& error_message)
+{
+	std::cout << error_message << std::endl;
+	std::cout << line_stream.str() << std::endl;
+
+	if(pos != -1) {
+		pos = line_stream.str().size();     
+	}
+
+	for(int i=0; i<=pos; i++) {
+		std::cout << " ";
+	}
+	std::cout << "^" << std:: endl;
+
+}
+
+bool SDFReader::requestCommand(std::stringstream& line_stream) {
+	std::string command;
+	requestString(line_stream, command);
+
+	if(command == "define") {
+		requestDefinition(line_stream);
+
+	} else {
+		int pos = line_stream.tellg();
+		if(!error) {
+			printError(line_stream, pos - command.size()-1, std::string("unknown command ") + command);
+		}
+		error = true;
+	}
+	return !error;
+};
+
+
+bool SDFReader::requestString(std::stringstream& line_stream, std::string& str){
+	int pos = line_stream.tellg();
+	if(!(line_stream >> str)) {
+		if(!error) {
+			printError(line_stream, pos, std::string("expected string"));
+		}
+		error = true;
+	}
+	return !error;
+};
+
+bool SDFReader::requestDefinition(std::stringstream& line_stream){
+	std::string entity_name;
+	requestString(line_stream, entity_name);
+	
+
+	if(entity_name == "material") {
+		requestMaterial(line_stream);
+
+		// std::cout<<entity_name<<std::endl;
+		// for (auto& x: materials) {
+		// 	std::cout <<"SDF contains following Materials: "<<std::endl;
+		// 	std::cout << x.first << ": " << *x.second << '\n';
+		// }
+	} 
+	if(entity_name == "shape") {
+		requestShape(line_stream);
+	} 
+	//weitere ifs
+
+
+	else {
+		int pos = line_stream.tellg();
+		if(!error) {
+			printError(line_stream, pos - entity_name.size()-1, std::string("unknown entity ") + entity_name);
+		}
+		error = true;
+	}
+	return !error;
+};
+
+bool SDFReader::requestShape(std::stringstream& line_stream){
+
+	int pos = 0; //current position
+
+	std::string shapeType;
+	requestString(line_stream, shapeType);
+
+	if(shapeType == "box"){
+
+		std::string name;
+		requestString(line_stream, name);
+
+		std::cout<<shapeType<<" "<<name<<std::endl;
+
+		glm::vec3 p1;
+		requestVec3(line_stream, p1);
+		// std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
+
+		glm::vec3 p2;
+		requestVec3(line_stream, p2);
+		// std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
+
+
+		std::string material;
+		requestString(line_stream, material);
+		std::shared_ptr<Material> mat = materials.find(material)->second;
+
+
+		if(mat == 0){
+			if(!error) {
+				pos = line_stream.tellg();
+				printError(line_stream, pos, std::string("material not found"));
+			}
+			error = true;
+		}
+
+		auto shape = std::make_shared<Box>(mat);
+		float xCenter = p2.x-(p2.x-p1.x)/2;
+		float yCenter = p2.y-(p2.y-p1.y)/2;
+		float zCenter = p2.z-(p2.z-p1.z)/2;
+		shape->translate(glm::vec3(xCenter,yCenter,zCenter));
+
+		float scalingX = (p2.x-p1.x)/2;
+		float scalingY = (p2.y-p1.y)/2;
+		float scalingZ = (p2.z-p1.z)/2;
+		shape->scale(glm::vec3(scalingX,scalingY,scalingZ));
+
+		scene_.add_shape(shape); 
+	}
+	if(shapeType == "sphere"){
+
+		std::string name;
+		requestString(line_stream, name);
+
+		std::cout<<shapeType<<" "<<name<<std::endl;
+
+
+		glm::vec3 center;
+		requestVec3(line_stream, center);
+
+		float radius;
+		requestFloat(line_stream, radius);
+
+		std::string material;
+		requestString(line_stream, material);
+		std::shared_ptr<Material> mat = materials.find(material)->second;
+		if(mat == 0){
+			if(!error) {
+				pos = line_stream.tellg();
+				printError(line_stream, pos, std::string("material not found"));
+			}
+			error = true;
+		}
+
+		auto shape = std::make_shared<Sphere>(mat);
+		shape->translate(center);
+		shape->scale(glm::vec3(radius));
+		scene_.add_shape(shape);
+	}
+	else{
+		if(!error) {
+			pos = line_stream.tellg();
+			printError(line_stream, pos, std::string("shapetype not found"));
+		}
+		error = true;
+	} 
+
+	if(!line_stream.eof()) {
+		if(!error) {
+			pos = line_stream.tellg();
+			printError(line_stream, pos, std::string("expected end of line"));
+		}
+		error = true;
+	}
+
+	return !error;
+};
+
+bool SDFReader::requestMaterial(std::stringstream& line_stream) {
+
+	std::string name;
+	requestString(line_stream, name);
+
+	Color ambient;
+	requestColor(line_stream, ambient);
+
+	Color diffuse;
+	requestColor(line_stream, diffuse);
+
+	Color specular;
+	requestColor(line_stream, specular);
+
+	float m;
+	requestFloat(line_stream, m);
+
+	auto material = std::make_shared<Material>(ambient,diffuse,specular,m);
+	materials.insert ({name,material});
+
+	int pos = line_stream.tellg();
+	if(!line_stream.eof()) {
+		if(!error) {
+			printError(line_stream, pos, std::string("expected end of line"));
+		}
+		error = true;
+	}
+
+	return !error;
+};
+
+bool SDFReader::requestFloat(std::stringstream& line_stream, float& f)
+{
+	int pos = line_stream.tellg();
+	if(!(line_stream >> f)) {
+		if(!error) {
+			printError(line_stream, pos, std::string("expected float"));
+		}
+		error = true;
+	}
+	return !error;
+}
+
+bool SDFReader::requestVec3(std::stringstream& line_stream, glm::vec3& p)
+{
+	requestFloat(line_stream, p.x);
+	requestFloat(line_stream, p.y);
+	requestFloat(line_stream, p.z);
+	return !error;
+}
+
+bool SDFReader::requestColor(std::stringstream& line_stream, Color& cl)
+{
+	requestFloat(line_stream, cl.r);
+	requestFloat(line_stream, cl.g);
+	requestFloat(line_stream, cl.b);
+	return !error;
+}

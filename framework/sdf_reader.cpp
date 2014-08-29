@@ -2,7 +2,7 @@
 
 
 SDFReader::SDFReader(std::string const& path)
-:filepath(path),error(false),scene_(),materials(),shapes(),error_message("Error: could not read SDF"){}
+:filepath(path),error(false),scene_(),materials(),shapes(),lights(),error_message("Error: could not read SDF"){}
 
 
 
@@ -107,6 +107,9 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 	if(entity_name == "shape") {
 		requestShape(line_stream);
 	} 
+	if(entity_name == "light"){
+		requestLight(line_stream);
+	}
 	//weitere ifs
 
 
@@ -118,6 +121,33 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 		error = true;
 	}
 	return !error;
+};
+
+bool SDFReader::requestLight(std::stringstream& line_stream){
+
+	std::string light_name;
+	requestString(line_stream, light_name);
+
+	glm::vec3 light_pos;
+	requestVec3(line_stream,light_pos);
+
+	Color diffuse;
+	requestColor(line_stream,diffuse);
+
+	Color ambient;
+	requestColor(line_stream,ambient);
+
+	Light l(light_pos,diffuse,ambient);
+	scene_.add_light(l);
+	lights.insert({light_name,l});
+
+// 	int pos = line_stream.tellg();
+// 	if(!error) {
+// 		printError(line_stream, pos - entity_name.size()-1, std::string("unknown entity ") + entity_name);
+// 	}
+// 	error = true;
+// }
+return !error;
 };
 
 bool SDFReader::requestShape(std::stringstream& line_stream){

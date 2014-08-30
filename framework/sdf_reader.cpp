@@ -71,7 +71,7 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 		if(!error) {
 			printError(line_stream, pos - command.size()-1, std::string("unknown command ") + command);
 		}
-		error = true;
+		return error;
 	}
 	return !error;
 };
@@ -125,13 +125,14 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 };
 
 bool SDFReader::requestTransformation(std::stringstream& line_stream){
-	std::string shape_name;
-	requestString(line_stream, shape_name);
+	std::string item_name;
+	requestString(line_stream, item_name);
 
-	std::shared_ptr<Shape> shape = shapes.find(shape_name)->second;
-	if(!shape){
+//RUNTIME ERROR!
+	std::shared_ptr<Shape> shape_ = shapes.find(item_name)->second;
+	if(!shape_){
 		int pos = line_stream.tellg();
-		printError(line_stream, pos, std::string("shape for transformation not found"));
+		printError(line_stream, pos - item_name.size()-1, std::string("child shape not found: ")+item_name);
 		return error;
 	}
 
@@ -140,21 +141,18 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 
 
 	if(transformationType == "scale"){
-		requestScaling(line_stream, shape);
+		requestScaling(line_stream, shape_);
 	}
 	if(transformationType == "translate"){
-		requestTranslation(line_stream, shape);
+		requestTranslation(line_stream, shape_);
 	}
 	if(transformationType == "rotate"){
-		requestRotation(line_stream, shape);
+		requestRotation(line_stream, shape_);
 	}
 	else{
-		if(!error){
-			int pos = line_stream.tellg();
-			std::cout<<"transformationType: "<<transformationType<<std::endl;
-			printError(line_stream, pos, std::string("transformation type unknown"));
-			return error;
-		}
+		int pos = line_stream.tellg();
+		printError(line_stream, pos - transformationType.size()-1, std::string("transformation type unknown: ")+transformationType);
+		return error;
 	}
 	return !error;
 };
@@ -213,7 +211,9 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 	glm::vec3 up;
 	requestVec3(line_stream, up);
 
+
 	Camera cam(fov_x,eye,dir,up);
+	cameras.insert({camera_name,cam});
 
 	return !error;
 };
@@ -262,17 +262,13 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		 // std::cout<<p1.x<<","<<p1.y<<","<<p1.z<<std::endl;
 
 
-		std::string material;
-		requestString(line_stream, material);
-		std::shared_ptr<Material> mat = materials.find(material)->second;
-
-
-		if(mat == 0){
-			if(!error) {
-				pos = line_stream.tellg();
-				printError(line_stream, pos, std::string("material not found"));
-			}
-			error = true;
+		std::string material_name;
+		requestString(line_stream, material_name);
+		std::shared_ptr<Material> mat = materials.find(material_name)->second;
+		if(!mat){
+			pos = line_stream.tellg();
+			printError(line_stream, pos - material_name.size()-1, std::string("material not found: ")+material_name);
+			return error;
 		}
 
 		auto shape = std::make_shared<Box>(mat);
@@ -305,15 +301,13 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		float radius;
 		requestFloat(line_stream, radius);
 
-		std::string material;
-		requestString(line_stream, material);
-		std::shared_ptr<Material> mat = materials.find(material)->second;
-		if(mat == 0){
-			if(!error) {
-				pos = line_stream.tellg();
-				printError(line_stream, pos, std::string("material not found"));
-			}
-			return error = true;
+		std::string material_name;
+		requestString(line_stream, material_name);
+		std::shared_ptr<Material> mat = materials.find(material_name)->second;
+		if(!mat){
+			pos = line_stream.tellg();
+			printError(line_stream, pos - material_name.size()-1, std::string("material not found: ")+material_name);
+			return error;
 		}
 
 		auto shape = std::make_shared<Sphere>(mat);
@@ -333,11 +327,9 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 			requestString(line_stream, child_name);
 			std::shared_ptr<Shape> child = shapes.find(child_name)->second;
 			if(!child){
-				if(!error) {
-					pos = line_stream.tellg();
-					printError(line_stream, pos, std::string("child shape not found"));
-				}
-				return error = true;
+				pos = line_stream.tellg();
+				printError(line_stream, pos - child_name.size()-1, std::string("child shape not found: ")+child_name);
+				return error;
 			}
 			comp->add_child(child);
 		}
@@ -346,7 +338,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 	else{
 		if(!error) {
 			pos = line_stream.tellg();
-			printError(line_stream, pos, std::string("shapetype not found"));
+			printError(line_stream, pos - shapeType.size()-1, std::string("shapetype not found: ")+shapeType);
 		}
 		error = true;
 	} 

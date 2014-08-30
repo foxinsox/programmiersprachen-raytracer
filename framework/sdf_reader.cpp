@@ -64,14 +64,15 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 		requestDefinition(line_stream);
 	} 
 	if(command == "transform"){
+		//std::cout<<"ERROR: "<<requestTransformation(line_stream)<<std::endl;
 		requestTransformation(line_stream);
 	}
 	else {
-		int pos = line_stream.tellg();
-		if(!error) {
+		if(!error){
+			int pos = line_stream.tellg();
 			printError(line_stream, pos - command.size()-1, std::string("unknown command ") + command);
+			return error;
 		}
-		return error;
 	}
 	return !error;
 };
@@ -128,17 +129,20 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	std::string item_name;
 	requestString(line_stream, item_name);
 
-//RUNTIME ERROR!
-	std::shared_ptr<Shape> shape_ = shapes.find(item_name)->second;
-	if(!shape_){
+	std::shared_ptr<Shape> shape_;
+	std::map<std::string,std::shared_ptr<Shape>>::iterator it;
+	it = shapes.find(item_name);
+	if(it == shapes.end()){
 		int pos = line_stream.tellg();
-		printError(line_stream, pos - item_name.size()-1, std::string("child shape not found: ")+item_name);
+		printError(line_stream, pos - item_name.size()-1, std::string("transformation shape not found: ")+item_name);
 		return error;
+	}
+	else{
+		shape_ = shapes.find(item_name)->second;
 	}
 
 	std::string transformationType;
 	requestString(line_stream, transformationType);
-
 
 	if(transformationType == "scale"){
 		requestScaling(line_stream, shape_);

@@ -46,6 +46,10 @@ private:
 	bool requestColor(std::stringstream& token_stream, Color& cl);
 	bool requestLight(std::stringstream& token_stream);
 	bool requestCamera(std::stringstream& token_stream);
+	bool requestTransformation(std::stringstream& token_stream);
+	bool requestScaling(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
+	bool requestTranslation(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
+	bool requestRotation(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
 	void printError(std::stringstream& token_stream, int position, std::string const& error_message);
 };
 

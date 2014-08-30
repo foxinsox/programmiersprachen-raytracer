@@ -8,11 +8,6 @@ SDFReader::SDFReader(std::string const& path)
 
 
 bool SDFReader::load(){
-	/*angegebenes file durchgehen, wert für wert zwischen den kommas auslesen, entsprechend verwerten.
-	ziel: scene bestücken.*/
-
-	// stringstream ss;
-	// string s = ss.str();
 
 	error = false;
 	std::ifstream ifs;
@@ -67,8 +62,11 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 
 	if(command == "define") {
 		requestDefinition(line_stream);
-
-	} else {
+	} 
+	if(command == "transform"){
+		requestTransformation(line_stream);
+	}
+	else {
 		int pos = line_stream.tellg();
 		if(!error) {
 			printError(line_stream, pos - command.size()-1, std::string("unknown command ") + command);
@@ -126,6 +124,69 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 	return !error;
 };
 
+bool SDFReader::requestTransformation(std::stringstream& line_stream){
+	std::string shape_name;
+	requestString(line_stream, shape_name);
+
+	std::shared_ptr<Shape> shape = shapes.find(shape_name)->second;
+	if(!shape){
+		int pos = line_stream.tellg();
+		printError(line_stream, pos, std::string("shape for transformation not found"));
+		return error;
+	}
+
+	std::string transformationType;
+	requestString(line_stream, transformationType);
+
+	std::cout<<"transformationType: "<<transformationType<<std::endl;
+
+	if(transformationType == "scale"){
+		requestScaling(line_stream, shape);
+	}
+	if(transformationType == "translate"){
+		requestTranslation(line_stream, shape);
+	}
+	if(transformationType == "rotate"){
+		requestRotation(line_stream, shape);
+	}
+	else{
+		int pos = line_stream.tellg();
+		printError(line_stream, pos, std::string("transformation type unknown"));
+		return error;
+	}
+	return !error;
+};
+
+bool SDFReader::requestScaling(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){
+	glm::vec3 scalingVector;
+	requestVec3(line_stream, scalingVector);
+	//TODO: Error ausgeben, wenn zu viele oder wenige Parameter gefunden werden?
+	shape->scale(scalingVector);
+	return !error;
+};
+
+
+bool SDFReader::requestTranslation(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){
+	glm::vec3 translationVector;
+	requestVec3 (line_stream, translationVector);
+	//TODO: Error ausgeben, wenn zu viele oder wenige Parameter gefunden werden?
+	shape->translate(translationVector);
+	return !error;
+};
+
+
+bool SDFReader::requestRotation(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){
+	float rotation_deg;
+	requestFloat(line_stream, rotation_deg);
+
+	glm::vec3 rotationAxis;
+	requestVec3(line_stream, rotationAxis);
+
+	shape->rotate(rotation_deg, rotationAxis);
+	std::cout<<"rotating "<<std::endl;
+	return !error;
+};
+
 bool SDFReader::requestCamera(std::stringstream& line_stream){
 
 //camera <name> <fov-x> <eye> <dir> <up>
@@ -151,8 +212,6 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 	requestVec3(line_stream, up);
 
 	Camera cam(fov_x,eye,dir,up);
-
-
 
 	return !error;
 };

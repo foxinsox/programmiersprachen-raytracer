@@ -63,7 +63,7 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 	if(command == "define") {
 		requestDefinition(line_stream);
 	} 
-	if(command == "transform"){
+	else if(command == "transform"){
 		//std::cout<<"ERROR: "<<requestTransformation(line_stream)<<std::endl;
 		requestTransformation(line_stream);
 	}
@@ -103,13 +103,13 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 		// 	std::cout << x.first << ": " << *x.second << '\n';
 		// }
 	} 
-	if(entity_name == "shape") {
+	else if(entity_name == "shape") {
 		requestShape(line_stream);
 	} 
-	if(entity_name == "light"){
+	else if(entity_name == "light"){
 		requestLight(line_stream);
 	}
-	if(entity_name == "camera"){
+	else if(entity_name == "camera"){
 		requestCamera(line_stream);
 	}
 	//weitere ifs
@@ -128,7 +128,6 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	std::string item_name;
 	requestString(line_stream, item_name);
-
 	std::shared_ptr<Shape> shape_;
 	std::map<std::string,std::shared_ptr<Shape>>::iterator it;
 	it = shapes.find(item_name);
@@ -147,10 +146,10 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	if(transformationType == "scale"){
 		requestScaling(line_stream, shape_);
 	}
-	if(transformationType == "translate"){
+	else if(transformationType == "translate"){
 		requestTranslation(line_stream, shape_);
 	}
-	if(transformationType == "rotate"){
+	else if(transformationType == "rotate"){
 		requestRotation(line_stream, shape_);
 	}
 	else{
@@ -159,6 +158,7 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 		return error;
 	}
 	return !error;
+
 };
 
 bool SDFReader::requestScaling(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){

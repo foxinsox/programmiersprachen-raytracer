@@ -138,7 +138,6 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	std::string transformationType;
 	requestString(line_stream, transformationType);
 
-	std::cout<<"transformationType: "<<transformationType<<std::endl;
 
 	if(transformationType == "scale"){
 		requestScaling(line_stream, shape);
@@ -150,9 +149,12 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 		requestRotation(line_stream, shape);
 	}
 	else{
-		int pos = line_stream.tellg();
-		printError(line_stream, pos, std::string("transformation type unknown"));
-		return error;
+		if(!error){
+			int pos = line_stream.tellg();
+			std::cout<<"transformationType: "<<transformationType<<std::endl;
+			printError(line_stream, pos, std::string("transformation type unknown"));
+			return error;
+		}
 	}
 	return !error;
 };
@@ -183,7 +185,7 @@ bool SDFReader::requestRotation(std::stringstream& line_stream, std::shared_ptr<
 	requestVec3(line_stream, rotationAxis);
 
 	shape->rotate(rotation_deg, rotationAxis);
-	std::cout<<"rotating "<<std::endl;
+	// std::cout<<"rotating: "<<rotation_deg<<"° at axis: "<<rotationAxis.x<<","<<rotationAxis.y<<","<<rotationAxis.z<<std::endl;
 	return !error;
 };
 

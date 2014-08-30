@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "ray.hpp"
+#include <iostream>
 
 class Camera{
 
@@ -17,6 +18,7 @@ public:
 
 	void translate(glm::vec3 const& translationVector);
 	void rotate(float degrees, glm::vec3 const& axis);
+	
 
 
 private:
@@ -25,6 +27,11 @@ private:
 	glm::mat4 world_to_camera_;
 	glm::vec2 fov;
 	float depth;  //focal length. muss berechnet werden
+	friend std::ostream& operator<<(std::ostream& os, Camera const& cam){
+		os << "Camera with depth = " << cam.depth <<"\n";
+		return os;
+	}
+	
 };
 
 #endif //BUW_CAMERA_HPP

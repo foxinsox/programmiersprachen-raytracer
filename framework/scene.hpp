@@ -13,7 +13,7 @@ public:
 	Scene();
 
 	void camera(Camera const& camera);
-	Camera const& camera() const;
+	Camera& camera();
 
 	void add_light(Light const& light);
 	std::vector<Light> const& lights()const;

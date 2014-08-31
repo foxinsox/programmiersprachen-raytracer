@@ -9,7 +9,7 @@ void Scene::camera(Camera const& camera){
 	camera_ = camera;
 };
 
-Camera const& Scene::camera()const{
+Camera& Scene::camera() {
 	return camera_;
 }
 

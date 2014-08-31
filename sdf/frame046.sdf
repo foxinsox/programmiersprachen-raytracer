@@ -1,0 +1,27 @@
+define	material mint	1 0 1 0.8 1 1 0.2 1 1 300.0
+define	material blue	0.1 0.1 0.1 0.5 0.5 1 0.3 0.3 0.3 700.0
+define	material red	0.1 0.1 0.1 1 0.2 0.2 0.5 0.5 0.5 400.0
+define	material white	0.9 0.9 0.9 0.9 0.9 0.9 1 1 1 200.0
+define	material green  1 0.9 0 0.8 0.8 0 0.8 1 0 900.0
+define shape box table -10 0 -10 10 -1 10 white
+define shape box box1 0 0 0 1 1 1 mint
+define shape box box2 0 0 0 1 1 1 red
+define shape sphere sphere1 0 0 0 -2 blue
+define shape sphere sphere2 0 0 0 -2.5 green
+define shape composite root box1 sphere1 box2
+define light light	5 9 8	1.0 1.0 1.0	0.6 0.6 0.6
+define light light2 -20 4 10	1.0 0.7 1.0 0.9 0.3 0.9
+define camera eye 66.0 0 0 0 0 0 -1 0 1 0
+transform eye translate 0 -2 20
+transform eye rotate -30 1 0 0
+transform box1 scale 3 2 3
+transform box1 translate -7 0.5 -2
+transform box2 rotate 45 1 1 1
+transform box2 scale 3 3 3
+transform box2 translate 4 3 1
+transform sphere1 translate 0 2 2.3
+transform sphere2 scale 0.1 1 0.7
+transform sphere2 rotate -184 0 1 0
+transform sphere2 translate -6 2.5 6
+transform eye rotate 9.2 0 1 0 
+render eye ppm/image046.ppm 300 300

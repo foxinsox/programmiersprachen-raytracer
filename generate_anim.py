@@ -1,13 +1,27 @@
 import os
+import sys
 
-width = 300
-height = 300
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-r","--resolution",
+	action="store", type="int", nargs=2, dest="resolution")
+parser.add_option("-d","--duration",
+	action="store", type="int", dest="duration")
 
-cam_rot_angle = 0.2
+(options, args) = parser.parse_args(sys.argv)
+
+print options
+
+#exit()
+
+width = options.resolution[0]
+height = options.resolution[1]
+
+cam_rot_angle_y = 0.2
 coin_rot_angle = -4
 sphere1_step = 0.05
 
-anim_frames = 140
+anim_frames = options.duration
 
 mp4_file = "mp4/animation.mp4"
 
@@ -60,10 +74,10 @@ for frame in range(0, anim_frames):
 	sdf += "transform sphere1 translate 0 2 "+str(frame * sphere1_step)+"\n"
 	sdf += "transform sphere2 scale 0.1 1 0.7\n"
 	sdf += "transform sphere2 rotate "+str(frame * coin_rot_angle)+" 0 1 0\n"
-	sdf += "transform sphere2 translate -6 2.5 6\n"
+	sdf += "transform sphere2 translate -6 2.75 6\n"
 
 	# camera transformation
-	sdf += "transform eye rotate " + str(frame * cam_rot_angle) + " 0 1 0 \n"
+	sdf += "transform eye rotate " + str(frame * cam_rot_angle_y) + " 0 1 0 \n"
 	sdf += "render eye " + ppm_file + " " + str(width) + " " + str(height)
 
 	# write final sdf
@@ -72,6 +86,7 @@ for frame in range(0, anim_frames):
 	f.close()
 
 	# render frame
+	print "frame: " + str(frame) + " of "+str(anim_frames)
 	os.system("./cmake_out/build/Release/raytracer " + sdf_file + " --no-window")
 
 	os.system("pnmtopng " + ppm_file + " > " + png_file)

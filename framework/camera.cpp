@@ -36,12 +36,6 @@ void Camera::translate(glm::vec3 const& translationVector){
 	auto m = glm::translate(glm::mat4(), translationVector);
 	camera_to_world_ = m * camera_to_world_;
 	world_to_camera_ = world_to_camera_ * m;
-	for (int i=0; i<4; ++i) {
-		for (int j=0; j<4; ++j) {
-			std::cout << camera_to_world_[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
 }
 
 void Camera::rotate(float const degrees, glm::vec3 const& axis){

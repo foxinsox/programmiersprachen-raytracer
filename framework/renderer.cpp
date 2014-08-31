@@ -33,7 +33,7 @@ void Renderer::render()
 {
   //auflösung durchgehen, für jeden Pixel create_ray aufrufen.
 
-  Camera cam = scene_.camera();
+  auto cam = scene_.camera();
 
   glm::vec2 res(width_, height_);
 
@@ -47,7 +47,7 @@ void Renderer::render()
       int rayDepth = 1000; //TODO: automatisieren!
 
       //primary-rays erzeugen!
-      Ray ray = cam.generate_ray_at(sample_pos, rayDepth);
+      Ray ray = cam->generate_ray_at(sample_pos, rayDepth);
 
       //primary tracing:
       Intersection i = trace(ray);

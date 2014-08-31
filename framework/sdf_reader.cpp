@@ -160,7 +160,7 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	std::map<std::string,std::shared_ptr<Shape>>::iterator it_shapes;
 	it_shapes = shapes.find(item_name);
 	if(it_shapes == shapes.end()){
-		std::map<std::string,Camera>::iterator it_cam;
+		std::map<std::string,std::shared_ptr<Camera>>::iterator it_cam;
 		it_cam = cameras.find(item_name);
 		if(it_cam==cameras.end()){
 			int pos = line_stream.tellg();
@@ -170,7 +170,7 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 		else{
 			//Camera cam = cameras.find(item_name)->second;
 			//TODO: extrem unsauber:
-			Camera& cam = scene_.camera();
+			auto cam = scene_.camera();
 
 			std::string transformationType;
 			requestString(line_stream, transformationType);
@@ -213,21 +213,21 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	}
 };
 
-bool SDFReader::requestCameraTranslation(std::stringstream& line_stream, Camera& cam){
+bool SDFReader::requestCameraTranslation(std::stringstream& line_stream, std::shared_ptr<Camera> const& cam){
 	glm::vec3 translationVector;
 	requestVec3 (line_stream, translationVector);
-	cam.translate(translationVector);
-	std::cout<<"Camera translation: "<<translationVector.x<<","<<translationVector.y<<","<<translationVector.z<<std::endl;
+	cam->translate(translationVector);
+	//std::cout<<"Camera translation: "<<translationVector.x<<","<<translationVector.y<<","<<translationVector.z<<std::endl;
 	return !error;
 };
 
 
-bool SDFReader::requestCameraRotation(std::stringstream& line_stream, Camera& cam){
+bool SDFReader::requestCameraRotation(std::stringstream& line_stream, std::shared_ptr<Camera>const& cam){
 	float rotation_deg;
 	requestFloat(line_stream, rotation_deg);
 	glm::vec3 rotationAxis;
 	requestVec3(line_stream, rotationAxis);
-	cam.rotate(rotation_deg,rotationAxis);
+	cam->rotate(rotation_deg,rotationAxis);
 	// std::cout<<"Camera rotation: "<<rotation_deg<<std::endl;
 	return !error;
 };
@@ -272,7 +272,8 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 	requestFloat(line_stream, fov_x);
 
 	if(line_stream.eof()){
-		Camera cam(fov_x);
+		auto cam = std::make_shared<Camera>(fov_x);
+	//	Camera cam(fov_x);
 		cameras.insert({camera_name,cam});
 		scene_.camera(cam);
 		std::cout<<"Default Camera Initialized: "<<camera_name<<std::endl;
@@ -289,8 +290,7 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 	requestVec3(line_stream, up);
 	// std::cout<<"Camera up-Vector: "<<up.x<<","<<up.y<<","<<up.z<<std::endl;
 
-
-	Camera cam(fov_x,eye,dir,up);
+	auto cam = std::make_shared<Camera>(fov_x,eye,dir,up);
 	cameras.insert({camera_name,cam});
 	scene_.camera(cam);
 

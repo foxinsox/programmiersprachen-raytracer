@@ -12,8 +12,9 @@ class Scene{
 public:
 	Scene();
 
-	void camera(Camera const& camera);
-	Camera& camera();
+	void camera(std::shared_ptr<Camera> const& camera);
+	std::shared_ptr<Camera>const& camera();
+
 
 	void add_light(Light const& light);
 	std::vector<Light> const& lights()const;
@@ -23,7 +24,7 @@ public:
 
 
 private:
-	Camera camera_;
+	std::shared_ptr<Camera> camera_;
 	Composite root_;
 	std::vector<Light> lights_;
 	

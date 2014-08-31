@@ -36,7 +36,7 @@ private:
 	std::map<std::string,std::shared_ptr<Material>> materials;
 	std::map<std::string,std::shared_ptr<Shape>> shapes;
 	std::map<std::string,Light> lights;
-	std::map<std::string,Camera> cameras;
+	std::map<std::string,std::shared_ptr<Camera>> cameras;
 	std::shared_ptr<Renderer> renderer_;
 
 	bool requestRendering(std::stringstream& token_stream);
@@ -55,8 +55,8 @@ private:
 	bool requestScaling(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
 	bool requestTranslation(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
 	bool requestRotation(std::stringstream& token_stream, std::shared_ptr<Shape> const& shape);
-	bool requestCameraTranslation(std::stringstream& token_stream, Camera& cam);
-	bool requestCameraRotation(std::stringstream& token_stream, Camera& cam);
+	bool requestCameraTranslation(std::stringstream& token_stream, std::shared_ptr<Camera> const& cam);
+	bool requestCameraRotation(std::stringstream& token_stream, std::shared_ptr<Camera> const& cam);
 	void printError(std::stringstream& token_stream, int position, std::string const& error_message);
 };
 

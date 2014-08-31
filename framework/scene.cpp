@@ -5,11 +5,11 @@ Scene::Scene()
 
 
 
-void Scene::camera(Camera const& camera){
+void Scene::camera(std::shared_ptr<Camera> const& camera){
 	camera_ = camera;
 };
 
-Camera& Scene::camera() {
+std::shared_ptr<Camera>const& Scene::camera() {
 	return camera_;
 }
 

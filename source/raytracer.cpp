@@ -6,8 +6,8 @@
 int main(int argc, char* argv[])
 {
 
-  unsigned const width = 600;
-  unsigned const height = 600;
+  unsigned  width = 600;
+  unsigned  height = 600;
   std::string const filename = "./raytracing.ppm";
   std::string const SDF_filepath = "../SDFFiles/testfile.sdf";
 
@@ -17,21 +17,28 @@ int main(int argc, char* argv[])
   //SDF_scene:
   Scene scene = reader.scene();
 
-  Renderer app(width, height, filename, scene);
+  std::shared_ptr<Renderer> app = reader.renderer();
+  //Renderer app = reader.renderer();
+
+
+  // Renderer app(width, height, filename, scene);
 
   std::thread thr([&app]() {
-    app.render(); 
+    app->render(); 
   });
 
-  Window win(glm::ivec2(width,height));
+  Window win(app->dimension());
+  
+
+
 
   while (!win.shouldClose()) {
     if (win.isKeyPressed(GLFW_KEY_ESCAPE)) {
       win.stop();
     }
 
-    glDrawPixels( width, height, GL_RGB, GL_FLOAT
-      , app.colorbuffer().data());
+    glDrawPixels( app->dimension().x, app->dimension().y, GL_RGB, GL_FLOAT
+        , app->colorbuffer().data());
 
     win.update();
   }

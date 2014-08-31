@@ -250,11 +250,13 @@ bool SDFReader::requestTranslation(std::stringstream& line_stream, std::shared_p
 bool SDFReader::requestRotation(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){
 	float rotation_deg;
 	requestFloat(line_stream, rotation_deg);
+	float rotation_rad = rotation_deg/180.0f * M_PI;
 
 	glm::vec3 rotationAxis;
 	requestVec3(line_stream, rotationAxis);
 
-	shape->rotate(rotation_deg, rotationAxis);
+
+	shape->rotate(rotation_rad, rotationAxis);
 	// std::cout<<"rotating: "<<rotation_deg<<"° at axis: "<<rotationAxis.x<<","<<rotationAxis.y<<","<<rotationAxis.z<<std::endl;
 	return !error;
 };

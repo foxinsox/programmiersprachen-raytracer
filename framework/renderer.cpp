@@ -10,6 +10,8 @@
 #include "renderer.hpp"
 
 
+
+
 Renderer::Renderer(unsigned w, unsigned h, std::string const& file, Scene const& scene)
 : width_(w)
 , height_(h)
@@ -18,6 +20,14 @@ Renderer::Renderer(unsigned w, unsigned h, std::string const& file, Scene const&
 , ppm_(width_, height_)
 , scene_(scene)
 {}
+
+// void Renderer::settings(int const w, int const h, std::string const& output, Scene const& s){
+// width_=w;
+// height_=h;
+// colorbuffer_.resize(w*h);
+// ppm_.settings(w,h,output);
+// scene_=s;
+// };
 
 void Renderer::render()
 {
@@ -195,4 +205,9 @@ Color Renderer::shadow(Ray const& ray) const{
     }
 
     ppm_.write(p);
+  }
+
+  glm::ivec2 Renderer::dimension() const
+  {
+    return glm::ivec2(width_,height_);
   }

@@ -28,6 +28,8 @@ public:
   const float RAY_EPSILON = 0.01f;
   void render();
   void write(Pixel const& p);
+  glm::ivec2 dimension() const;
+  //void settings(int const w,int const h, std::string const& output, Scene const& s);
 
   inline std::vector<Color> const& colorbuffer() const
   {
@@ -40,7 +42,8 @@ private:
   Color shade(Ray const& r, Intersection const& isec) const;
   Color shadow(Ray const& r) const;
 
-  Scene const& scene_;
+  //Scene const& scene_;//CHANGED
+  Scene scene_;
   unsigned width_;
   unsigned height_;
   std::vector<Color> colorbuffer_;

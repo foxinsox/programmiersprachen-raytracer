@@ -4,9 +4,6 @@
 SDFReader::SDFReader(std::string const& path)
 :filepath(path),error(false),scene_(),materials(),shapes(),lights(),cameras(),error_message("Error: could not read SDF"){}
 
-
-
-
 bool SDFReader::load(){
 
 	error = false;

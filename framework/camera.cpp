@@ -38,11 +38,14 @@ void Camera::translate(glm::vec3 const& translationVector){
 	world_to_camera_ = world_to_camera_ * m;
 }
 
-void Camera::rotate(float degrees, glm::vec3 const& axis){
+void Camera::rotate(float const degrees, glm::vec3 const& axis){
 	//von grad in rad umrechnen:
 	float rad = (degrees / 360.0f * M_PI);
 
 	auto m = glm::rotate(glm::mat4(), rad, axis);
+	// std::cout<<m[1][1]<<std::endl;
 	camera_to_world_ = m * camera_to_world_;
 	world_to_camera_ = world_to_camera_ * m;
+	// std::cout<<"Camera rotation: "<<degrees<<std::endl;
+
 }

@@ -170,7 +170,7 @@ bool SDFReader::requestTransformation(std::stringstream& line_stream){
 		else{
 			//Camera cam = cameras.find(item_name)->second;
 			//TODO: extrem unsauber:
-			Camera cam = scene_.camera();
+			Camera& cam = scene_.camera();
 
 			std::string transformationType;
 			requestString(line_stream, transformationType);

@@ -6,22 +6,21 @@
 int main(int argc, char* argv[])
 {
 
-  unsigned  width = 600;
-  unsigned  height = 600;
-  std::string const filename = "./raytracing.ppm";
-  std::string const SDF_filepath = "../SDFFiles/testfile.sdf";
+std::string SDF_filepath;
+if(argc>=2){
+SDF_filepath = argv[1];
+}
+else{
+std::cout<<"ERROR: no File to be opened"<<std::endl;
+return 0;
+}
 
   SDFReader reader(SDF_filepath);
   bool read = reader.load();
 
-  //SDF_scene:
   Scene scene = reader.scene();
 
   std::shared_ptr<Renderer> app = reader.renderer();
-  //Renderer app = reader.renderer();
-
-
-  // Renderer app(width, height, filename, scene);
 
   std::thread thr([&app]() {
     app->render(); 

@@ -74,3 +74,10 @@ PpmWriter::save()
 
   file.close();
 }
+
+// void PpmWriter::settings(int const w, int const h, std::string const& output){
+// width_ = w;
+// height_ = h;
+// data_.resize(w * h * (sizeof(Color)/sizeof(float)));
+// file_ = output;
+// };

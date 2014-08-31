@@ -27,6 +27,7 @@ public:
   void write(Pixel const& p);
   void save(std::string const& file);
   void save();
+  //void settings(int const w, int const h, std::string const& output);
 
 private:
   std::string file_;

@@ -38,6 +38,10 @@ Scene SDFReader::scene()const{
 	return scene_;
 };
 
+std::shared_ptr<Renderer>SDFReader::renderer()const{
+	return renderer_;
+}
+
 
 void 
 SDFReader::printError(std::stringstream& line_stream, int pos, std::string const& error_message)
@@ -67,6 +71,12 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 		//std::cout<<"ERROR: "<<requestTransformation(line_stream)<<std::endl;
 		requestTransformation(line_stream);
 	}
+	else if(command == "render"){
+		requestRendering(line_stream);
+	}
+	else if(command == "#"){
+		return !error;
+	}
 	else {
 		if(!error){
 			int pos = line_stream.tellg();
@@ -74,6 +84,25 @@ bool SDFReader::requestCommand(std::stringstream& line_stream) {
 			return error;
 		}
 	}
+	return !error;
+};
+
+bool SDFReader::requestRendering(std::stringstream& line_stream){
+	std::string camera_name;
+	requestString(line_stream, camera_name);
+
+	std::string output_name;
+	requestString(line_stream, output_name);
+
+	int width;
+	requestInt(line_stream, width);
+
+	int height;
+	requestInt(line_stream, height);
+
+	renderer_ = std::make_shared<Renderer>(width,height,output_name,scene_);
+	//renderer_.settings(width,height,output_name,scene_);
+
 	return !error;
 };
 
@@ -128,37 +157,79 @@ bool SDFReader::requestDefinition(std::stringstream& line_stream){
 bool SDFReader::requestTransformation(std::stringstream& line_stream){
 	std::string item_name;
 	requestString(line_stream, item_name);
-	std::shared_ptr<Shape> shape_;
-	std::map<std::string,std::shared_ptr<Shape>>::iterator it;
-	it = shapes.find(item_name);
-	if(it == shapes.end()){
-		int pos = line_stream.tellg();
-		printError(line_stream, pos - item_name.size()-1, std::string("transformation shape not found: ")+item_name);
-		return error;
+	std::map<std::string,std::shared_ptr<Shape>>::iterator it_shapes;
+	it_shapes = shapes.find(item_name);
+	if(it_shapes == shapes.end()){
+		std::map<std::string,Camera>::iterator it_cam;
+		it_cam = cameras.find(item_name);
+		if(it_cam==cameras.end()){
+			int pos = line_stream.tellg();
+			printError(line_stream, pos - item_name.size()-1, std::string("transformation shape not found: ")+item_name);
+			return error;
+		}
+		else{
+			//Camera cam = cameras.find(item_name)->second;
+			//TODO: extrem unsauber:
+			Camera cam = scene_.camera();
+
+			std::string transformationType;
+			requestString(line_stream, transformationType);
+			if(transformationType == "translate"){
+				requestCameraTranslation(line_stream, cam);
+			}
+			else if(transformationType == "rotate"){
+				requestCameraRotation(line_stream, cam);
+			}
+			else{
+				int pos = line_stream.tellg();
+				printError(line_stream, pos - transformationType.size()-1, std::string("camera transformation type unknown: ")+transformationType);
+				return error;
+			}
+
+			return !error;
+		}
 	}
 	else{
-		shape_ = shapes.find(item_name)->second;
-	}
+		std::shared_ptr<Shape> shape_ = shapes.find(item_name)->second;
+		
+		std::string transformationType;
+		requestString(line_stream, transformationType);
 
-	std::string transformationType;
-	requestString(line_stream, transformationType);
+		if(transformationType == "scale"){
+			requestScaling(line_stream, shape_);
+		}
+		else if(transformationType == "translate"){
+			requestTranslation(line_stream, shape_);
+		}
+		else if(transformationType == "rotate"){
+			requestRotation(line_stream, shape_);
+		}
+		else{
+			int pos = line_stream.tellg();
+			printError(line_stream, pos - transformationType.size()-1, std::string("shape transformation type unknown: ")+transformationType);
+			return error;
+		}
+		return !error;
+	}
+};
 
-	if(transformationType == "scale"){
-		requestScaling(line_stream, shape_);
-	}
-	else if(transformationType == "translate"){
-		requestTranslation(line_stream, shape_);
-	}
-	else if(transformationType == "rotate"){
-		requestRotation(line_stream, shape_);
-	}
-	else{
-		int pos = line_stream.tellg();
-		printError(line_stream, pos - transformationType.size()-1, std::string("transformation type unknown: ")+transformationType);
-		return error;
-	}
+bool SDFReader::requestCameraTranslation(std::stringstream& line_stream, Camera& cam){
+	glm::vec3 translationVector;
+	requestVec3 (line_stream, translationVector);
+	cam.translate(translationVector);
+	std::cout<<"Camera translation: "<<translationVector.x<<","<<translationVector.y<<","<<translationVector.z<<std::endl;
 	return !error;
+};
 
+
+bool SDFReader::requestCameraRotation(std::stringstream& line_stream, Camera& cam){
+	float rotation_deg;
+	requestFloat(line_stream, rotation_deg);
+	glm::vec3 rotationAxis;
+	requestVec3(line_stream, rotationAxis);
+	cam.rotate(rotation_deg,rotationAxis);
+	// std::cout<<"Camera rotation: "<<rotation_deg<<std::endl;
+	return !error;
 };
 
 bool SDFReader::requestScaling(std::stringstream& line_stream, std::shared_ptr<Shape> const& shape){
@@ -202,7 +273,9 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 
 	if(line_stream.eof()){
 		Camera cam(fov_x);
+		cameras.insert({camera_name,cam});
 		scene_.camera(cam);
+		std::cout<<"Default Camera Initialized: "<<camera_name<<std::endl;
 		return !error;
 	}
 
@@ -214,10 +287,12 @@ bool SDFReader::requestCamera(std::stringstream& line_stream){
 
 	glm::vec3 up;
 	requestVec3(line_stream, up);
+	// std::cout<<"Camera up-Vector: "<<up.x<<","<<up.y<<","<<up.z<<std::endl;
 
 
 	Camera cam(fov_x,eye,dir,up);
 	cameras.insert({camera_name,cam});
+	scene_.camera(cam);
 
 	return !error;
 };
@@ -249,6 +324,8 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 
 	std::string shapeType;
 	requestString(line_stream, shapeType);
+
+	
 
 	if(shapeType == "box"){
 
@@ -292,7 +369,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		scene_.add_shape(shape); 
 		shapes.insert ({name,shape});
 	}
-	if(shapeType == "sphere"){
+	else if(shapeType == "sphere"){
 
 		std::string name;
 		requestString(line_stream, name);
@@ -321,7 +398,7 @@ bool SDFReader::requestShape(std::stringstream& line_stream){
 		shapes.insert ({name,shape});
 
 	}
-	if(shapeType == "composite"){
+	else if(shapeType == "composite"){
 		std::string comp_name;
 		requestString(line_stream, comp_name);
 		auto comp = std::make_shared<Composite>();
@@ -395,6 +472,17 @@ bool SDFReader::requestFloat(std::stringstream& line_stream, float& f)
 	if(!(line_stream >> f)) {
 		if(!error) {
 			printError(line_stream, pos, std::string("expected float"));
+		}
+		error = true;
+	}
+	return !error;
+}
+bool SDFReader::requestInt(std::stringstream& line_stream, int& i)
+{
+	int pos = line_stream.tellg();
+	if(!(line_stream >> i)) {
+		if(!error) {
+			printError(line_stream, pos, std::string("expected integer"));
 		}
 		error = true;
 	}

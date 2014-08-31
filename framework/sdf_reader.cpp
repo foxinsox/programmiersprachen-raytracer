@@ -22,7 +22,7 @@ bool SDFReader::load(){
 		}
 	}
 	else{
-		std::cout<<"file could not be opened"<<std::endl;
+		std::cout<<"ERROR: File could not be opened"<<std::endl;
 		error = true;
 	}
 	ifs.close();

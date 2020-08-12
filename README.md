@@ -21,9 +21,9 @@ Programmiersprachen: Raytracer
 * camera
 
 ## Python script:
-* automatized creation of different eSDF-Files
-* automatized execution of the raytracer
-* automatized creation of a mp4-animation
+* automated creation of different eSDF-Files
+* automated execution of the raytracer
+* automated creation of a mp4-animation
 * resolution and amount of frames (duration) via command line arguments
 
 ## UML Diagram
